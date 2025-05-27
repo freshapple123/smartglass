@@ -14,6 +14,7 @@ import speech_recognition as sr
 import openai
 from gtts import gTTS
 import pygame
+import threading
 
 # 환경 변수 로드
 load_dotenv()
@@ -25,6 +26,9 @@ client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 # 책 제목
 book_title = "논어"
+
+# 전역 플래그
+stop_flag = False
 
 # 음성 출력 함수
 def speak(text):
@@ -66,16 +70,38 @@ def is_different_page(text1, text2, threshold=0.5):
     ratio = SequenceMatcher(None, text1, text2).ratio()
     return ratio < threshold
 
+# 음성으로 "그만" 감지 스레드
+def listen_for_stop_word():
+    global stop_flag
+    recognizer = sr.Recognizer()
+    mic = sr.Microphone()
+    with mic as source:
+        recognizer.adjust_for_ambient_noise(source)
+    while not stop_flag:
+        with mic as source:
+            try:
+                audio = recognizer.listen(source, timeout=1, phrase_time_limit=3)
+                text = recognizer.recognize_google(audio, language="ko-KR")
+                print("🗣️ 음성 인식:", text)
+                if "그만" in text:
+                    stop_flag = True
+                    speak("책 읽기를 종료할게요.")
+                    break
+            except:
+                continue
+
 # 책 OCR + 그만 감지 통합 함수
 def auto_detect_and_ocr_with_stop(model_path="yolo11n.pt"):
+    global stop_flag
+    stop_flag = False
+
+    threading.Thread(target=listen_for_stop_word, daemon=True).start()
+
     model = YOLO(model_path)
     cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         print("❌ 웹캠 열기 실패")
         return
-
-    recognizer = sr.Recognizer()
-    mic = sr.Microphone()
 
     save_dir = f"book_pages/{book_title}"
     os.makedirs(save_dir, exist_ok=True)
@@ -88,23 +114,10 @@ def auto_detect_and_ocr_with_stop(model_path="yolo11n.pt"):
 
     print(f"📘 책: {book_title} | 텍스트 저장 시작 (ESC 또는 '그만'으로 종료)")
 
-    while True:
+    while not stop_flag:
         ret, frame = cap.read()
         if not ret:
             break
-
-        # 음성 인식 체크
-        with mic as source:
-            recognizer.adjust_for_ambient_noise(source, duration=0.2)
-            try:
-                audio = recognizer.listen(source, timeout=1, phrase_time_limit=3)
-                speech = recognizer.recognize_google(audio, language="ko-KR")
-                if "그만" in speech:
-                    print("🛑 '그만' 인식됨. OCR 종료")
-                    speak("책 읽기를 종료할게요.")
-                    break
-            except (sr.WaitTimeoutError, sr.UnknownValueError):
-                pass
 
         results = model(frame, verbose=False)[0]
         book_box = None
@@ -158,8 +171,9 @@ def auto_detect_and_ocr_with_stop(model_path="yolo11n.pt"):
 
     cap.release()
     cv2.destroyAllWindows()
+    return True  # ✅ 종료 후 상태 전달
 
-# GPT 대화 + 메뉴 처리 (Rule-based)
+# GPT 대화 + 메뉴 처리 (공백 제거 포함)
 def gpt_menu_conversation():
     recognizer = sr.Recognizer()
     while True:
@@ -173,11 +187,18 @@ def gpt_menu_conversation():
             user_speech = recognizer.recognize_google(audio, language="ko-KR")
             print("🗣️ 인식된 말:", user_speech)
 
-            if "책읽기" in user_speech:
+            normalized = user_speech.replace(" ", "")
+
+            if "책읽기" in normalized:
                 speak("책을 스캔할게요. 중간에 '그만'이라고 말하면 멈춰요.")
-                auto_detect_and_ocr_with_stop()
+                result = auto_detect_and_ocr_with_stop()
+
+                # ✅ 마이크 리소스 정리 대기
+                if result:
+                    time.sleep(0.5)  # 마이크 충돌 방지용 짧은 대기
+
                 continue
-            elif "그만" in user_speech:
+            elif "그만" in normalized:
                 speak("종료할게요.")
                 break
             else:
@@ -187,26 +208,40 @@ def gpt_menu_conversation():
             speak("다시 말씀해주세요.")
         except Exception as e:
             print("⚠️ 오류 발생:", e)
+            time.sleep(0.5)  # 마이크 충돌 시 안전 대기
 
-# 웨이크워드 감지 루프
+
+
 def listen_for_wakeword():
     recognizer = sr.Recognizer()
     print("🎤 웨이크워드 '복돌'을 기다리는 중...")
 
     while True:
-        with sr.Microphone() as source:
-            recognizer.adjust_for_ambient_noise(source)
-            audio = recognizer.listen(source)
-
         try:
+            with sr.Microphone() as source:
+                recognizer.adjust_for_ambient_noise(source)
+                print("🎤 대기 중...")  # 마이크 감지 상태 출력
+                audio = recognizer.listen(source, timeout=3, phrase_time_limit=5)
+
             text = recognizer.recognize_google(audio, language="ko-KR")
             print("📝 인식:", text)
 
             if "복돌" in text:
                 speak("무엇을 도와드릴까요?")
                 gpt_menu_conversation()
-        except:
+                print("🎤 웨이크워드 '복돌'을 기다리는 중...")  # 메뉴 다녀온 후 다시 출력
+            else:
+                print("🔁 웨이크워드 아님 - 다시 대기 중...")
+        except sr.WaitTimeoutError:
+            print("⏱️ 조용했어요 - 다시 대기 중...")
             continue
+        except sr.UnknownValueError:
+            print("❌ 말은 들렸지만 이해 못했어요 - 다시 대기 중...")
+            continue
+        except Exception as e:
+            print(f"⚠️ 기타 오류: {e}")
+            continue
+
 
 # 실행
 listen_for_wakeword()
