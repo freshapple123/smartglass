@@ -1,0 +1,200 @@
+[11.23
+[1.4.21
+Mumpy-Temer
+tensor([[1., 2.).
+in
+324 범위를 지정하여 Tensor의 일부에 접근
+다양한 방법으로 Tensor의 일부에 범위를 지정하여 접근할 수 있습니
+범위를 지정하여 Ters의 요소에 접근
+a-torch, terser([[1, 2, 3],
+[4, 5, 6]])
+print("2개의 인덱스를 지정
+print(a[0, 1])
+print(범위를 지정
+print(a[1:2, :2])
+print("--- 리스트로 여러 개의 인덱스를 지정
+print(af, [0,2]])
+print("--- 3보다 큰 요소만을 지정 --")
+print(a[a>3])
+66 DWPTER 3 PyT로 구현하는 간단한 심층학습
+크다
+prim
+a[0,2]-11
+print(a)
+print(요소의 변경
+[., 33-22
+print(a)
+print("10보다 큰 요소인 변경)
+a[a>10]= 33
+print(a)
+Out
+2개의 인덱스를 지정
+tensor(2)
+・범위를 지정
+Tensor([[4, 5]])
+・리스트로 여러 개의 인덱스를 걱정
+tensor ([[13],
+[4, 5]])
+-3보다 큰 요소만을 지정
+tensor([4, 5, 61)
+・요소의 변경 ---
+tensor ([[1, 2, 11,
+[4, 5, 6]])
+-요소의 일괄 변경――
+tensor ([[1, 22, 11],
+[4, 22, 6]])
+-
+-16보다 큰 요소만 변경-
+-
+32 Ternal 67
+[4. 33, 671)
+in
+3.25 Tensor의 연산
+Tensor끼리의 인산은 일정한 규칙에 따라 이뤄집니다. 형태가 다른
+머리라도 조건을 충족하면 연산할 수 있습니다.
+▼ Tessor의 인신
+a-torch. tensor([1, 2, 3])
+b- torch.tensor([4,5,6])
+catorch.tensor ([16, 5, 41,
+[3, 2, 1]])
+print("---벡터와 스칼라의 연산
+print(a + 3)
+print("--벡터끼리의 연산)
+print(a + b)
+print("-- 행렬과 스칼라의 연산
+print(c+2)
+print("-- 행렬과 벡터의 연산(브로드캐스트) --")
+print(c+a)
+68 DHAPTER 3 PyTorch로 구현하는 간단한 심층학습
+Tena
+print(끼리의 연산一)
+print(c+c)
+Out
+벡터와 스칼라의 연산
+tensor([4, 5, 61)
+빅터끼리의 인산-
+tensor(ES, 7, 9])
+성령과 스칼라의 연산
+tensor([[8, 7, 6),
+{5, 4, 3]])
+・말과 벡터의 연산(브로드캐스트)---
+tensor([[7, 7, 7,
+[4, 4, 4]])
+행렬끼리의 연산-
+tensor ([[12, 10, B],
+[6, 4, 2]]]
+C와의 합에서는 브로드캐스트가 사용되고 있습니다. 브로드캐스트는 조건을
+충족하면 형태가 다른 Tensor끼리도 연산이 가능한 기능인데, 이 경우의 각
+행에 대응하는 요소가 더해집니다.
+3.2.6 Tensor 형태 변환하기
+Tensor에는 그 형태를 변환하는 함수와 메서드가 몇 가지 있습니다. View()
+메서드를 사용하면 Tensor 형태를 자유롭게 변경할 수 있습니다.
+view) 메서드로 Terisor 형태 변환하기
+In
+a = torch.tensor ([0, 1, 2, 3, 4, 5, 6, 7]) 1차원 Tensor
+32 Tensor 69
+Out
+tensar ([0,1,2,3),
+[4,5,6,7]])
+여러 인수 중 하나로 하면 그 자원의 요소수는 자동으로 계
+다음에서는 인수에 2와 4를 지정해야 하는 곳을 2화 -1을 걱정
+View)에서의 인수 중 1개월-1로 한다
+In
+catorch.tersor([0,1,2,3,4,5,6,7]
+1차원 Tensor
+d=c.vien(2-1) (24)의 2차원 Tensor로 변환
+print(d)
+Out
+tensor ([[0, 1, 2, 3],
+[4, 5, 6, 7]])
+또한, 인수들-1로만 하면 Tensor는 1차원으로 변환됩니다.
+▼view()메서드의 인수들로만 한다
+In
+e = torch.tensor ([[[e, 1],
+[2, 3]],
+[[4, 5],
+[6,7]]])
+3차원 Tensor
+f=C.view(1) 1차원 Tensor로 변환
+print(f)
+70. CHAPTER 3 PyTorch로 구현하는 간단한 심층학습
+산됩니다.
+Out
+tensor([e, 1, 2, 3, 4, 5, 6, 7])
+또한, squeeze() 메서드를 사용하면 요소수가 1인 차원이 삭제됩니다.
+In
+하고 있습니다.
+메트로 요소수가 1인 차원을 삭제하기
+print("--- 요스 수가 1인 차원이 포함되는 차원 Tensor
+g-torch.arange(e, 8).view(1, 2, 1, 4)
+print(g)
+print("--- 요소 수가 1인 차원을 삭제
+h=9.squeeze()
+print(h)
+Out
+-요소 수가 1인 차원이 포함되는 4차원 Tensor
+tensor ([[[[e, 1, 2, 3]],
+[[4,5,6,7]]]]>
+요소수가 1인 차원을 삭제-
+tensor([[8, 1, 2, 3],
+[4, 5, 6, 7]])
+반대로 unsqueeze() 메서드를 사용하면 요소수가 1인 차원을 추가할 수 있
+습니다.
+In
+unsqueeze()메서드로 요소 수가 1인 차원을 추가한다
+print("--- 2차원 Tensor ---")
+= torch.arange (8,8).vien(2-1)
+32 Tensor 71
+In
+Out
+5.view(2, 4) 47, 432233 en we
+print()
+tensor([[0, 1, 2, 3],
+[4, 5, 6, 7]])
+여러 인수 중 하나를 -1로 하면 그 차원의 요소 수는 자동으로 계산
+다음 예에서는 인수에 2와 4층 지정해야 하는 곳을 2와 1을 지정하
+view)메서드의 민수 중 1개월 -1로 한다
+ctorch.tensor ([0, 1, 2, 3, 4, 5, 6, 7]) 1차원 Tensor
+d-c.vier(2-1)(2, 4)의 2차원 Tensor로 변환
+print(d)
+Out
+tensor ([[0, 1, 2, 3],
+[4,5,6,7]]>
+또한, 인수굡-1로만 하면 Tensor는 1차원으로 변환됩니다.
+▼view() 메서드의 인수들-1로만 한다.
+In
+e = torch.tensor ([[[0, 1],
+[2, 3]],
+[[4, 5],
+[6,7]]]]
+3차원 Tensor
+fc.vien(-1) 1차원 Tensor로 변환
+print(f)
+70 CHAPTER 3 PyTorch로 구현하는 간단한 심학습
+됩니다.
+고 있습니다
+Out
+tensor ([0, 1, 2, 3, 4, 5, 6, 7])
+또한 squeeze()메서드를 사용하면 요소수가 1인 차원이 삭제됩니다.
+In
+see 메서드로 소수가 1억원을 하기
+print 요소수기 1인 자원이 포함되는 4차원 Tensor)
+9-torch.arange(e, 8).view(1, 2, 1, 4)
+print (g)
+print("요소수가 1인 차원을 삭제
+hg.squeeze()
+print(h)
+Out
+요소수기 1인 차원이 포함되는 4차원 Tensor
+Lensor ([[[[0, 1, 2, 3]],
+[[4,5,6,7]]]]>
+요소수가 1인 차원을 삭제
+tensor ([[e, 1, 2, 3],
+[4, 5, 6, 7]])
+반대로 unsqueeze() 메서드를 사용하면 요소 수가 1인 차원을 추가할 수 있
+습니다.
+In
+unsqueeze() 메서드로 요소 수가 1인 차원을 추가한다.
+print("--- 2차원 Tensor ---")
+i = torch.arange(0, B).view(2, -1)
+32 Tensor 71

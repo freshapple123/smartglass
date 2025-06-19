@@ -1,0 +1,148 @@
+Our
+AS의 형태는 sire 메서드로 취득
+-학원 리스트로부터 생성
+tenser ([1, 2],
+[3.433)
+pe을 지정하고, 배정도의 Tensor로 한다-
+tensor([[1, 2],
+[3.4.)], dtype-torch.float64)
+-부터 9까지의 수치로 초기화
+tensor([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+-모든 값이 0인 2×3의 Tensor ---
+tensor([[0., 0., 0.],
+[8., 0., 0.]])
+-모든 값이 난수인 2-3의 Tensor
+tersor([[0.3647, 0.3903, 0.1724],
+[0.8843, 0.7230, 0.8892]])
+Tensor의 형태는 size 메서드로 취득-
+torch.Size((2,3])
+linspace() 함수를 사용하면 지정한 범위에서 연속값을 생성할 수 있습니다.
+그래프의 가로등에 자주 사용됩니다.
+64 DHAPTER 3 PyTorch로 구현하는 간단한 심층학습
+▼limpace 4-5 Tensor 16171
+In
+print("--S부터 5까지의 연속값을 18개 생성
+g torch. linspace(-5, 5, 10)
+print(g)
+Out
+-S부터 5까지의 연속값을 18개 생성
+tensor([-5.0000, -3.8889, -2.7778, -1.6667, -8.5556, 0.5556, 1.6667,
+2.7778, 3.8889, 5.0000])
+3.2.3 NumPy 배열과 Tensor의 상호 변환
+기계학습에서는 수치 연산 라이브러리 NumPy의 배열이 자주 사용되므로
+Tensor와의 상호 변환은 중요합니다.
+Tensor NumPy 배열로 변환하기 위해서는 numpy() 메서드를 사용합니
+다. 또한, from_numpy() 함수로 NumPy의 배열을 Tensor로 변환할 수 있
+습니다.
+▼NumPy의 배열과 Tensor의 상호 변환
+In
+print("Tensor - NumPy ---")
+a= torch. tensor([[1, 2],
+b=a.numpy()
+print(b)
+[3, 4.]])
+print("NumPy - Tensor ---")
+c=torch.from_numpy (b)
+3.2 Tensor
+65
+Out
+printie)
+Tensor-NumPy ---
+[[1. 2.]
+[3.4.]]
+-NumPy-Tensor---
+tensor([[1., 2.].
+[3., 4.]])
+3.24 범위를 지정하여 Tensor의 일부에 접근
+다양한 방법으로 Tensor의 일부에 범위를 지정하여 접근할 수 있습니다.
+▼ 범위를 지정하여 Tensor의 요소에 접근
+In
+a = torch. tensor([[1, 2, 3],
+[4, 5, 6]])
+print("--- 2개의 인덱스를 지정 ---")
+print(a[0, 1])
+print("---범위를 지정 ---")
+print(a[1:2,:2])
+print("--- 리스트로 여러 개의 인덱스를 지정---")
+print(a[:, [0,2]])
+print("--- 3보다 큰 요소만을 지정 ---")
+print(a[a>3])
+66
+CHAPTER 3 PyTorch로 구현하는 간단한 심층학습
+print("요소의 변경 -->
+[02]-11
+print(a)
+print("요소의 일곱 변경)
+a[:, 1] = 22
+print(a)
+print("-10보다 큰 요소만 변경)
+a[a>10] 33
+print(a)
+Out
+-2개의 인덱스를 지정·
+tensor(2)
+범위를 지정
+tensor ([[4, 5]])
+-리스트로 여러 개의 인덱스를 지정
+tensor ([[13],
+[4, 6]])
+---3보다 큰 요소만을 지정
+tensor ([4, 5, 6])
+요소의 변경-
+tensor ([[1, 2, 11],
+[4, 5, 6]])
+•요소의 일괄 변경.
+tensor ([[1, 22, 11),
+[4, 22, 6]])
+•10보다 큰 요소만 변경-
+32 Tensor
+67
+tensor([[1, 33, 33],
+[4, 33, 6]])
+3.2.5 Tensor의 연산
+Tensor끼리의 연산은 일정한 규칙에 따라 이뤄집니다. 형태가 다른 Tensor
+끼리라도 조건을 충족하면 연산할 수 있습니다.
+▼Tensor의 연산
+In
+벡터
+a torch. tensor([1, 2, 3])
+b= torch. tensor([4, 5, 6])
+c= torch. tensor ([[6, 5, 4],
+[3, 2, 1]])
+print("--- 벡터와 스칼라의 연산 ---")
+print(a+3)
+print("-벡터끼리의 연산---")
+print(a + b)
+print("--- 행렬과 스칼라의 연산---")
+print(c+2)
+print("--- 행렬과 벡터의 연산(브로드캐스트) ---")
+print(c+a)
+68
+CHAPTER 3 PyTorch로 구현하는 간단한 심층학습
+print("--행렬끼리의 연산---")
+print(c+c)
+Out
+---벡터와 스칼라의 연산
+tensor([4, 5, 6])
+--벡터끼리의 연산--
+tensor([5, 7, 93)
+--행렬과 스칼라의 연산---
+tensor([[8, 7, 6],
+[5, 4, 3]])
+---행렬과 벡터의 연산(브로드캐스트)--
+tensor([[7, 7, 7],
+[4, 4, 4]])
+---행렬끼리의 연신
+tensor([[12, 18, 8],
+[6, 4, 2]])
+C와 a의 합에서는 브로드캐스트가 사용되고 있습니다. 브로드캐스트는 조건을
+충족하면 형태가 다른 Tensor끼리도 연산이 가능한 기능인데, 이 경우 C의 각
+행에 a의 대응하는 요소가 더해집니다.
+3.2.6 Tensor 형태 변환하기
+Tensor에는 그 형태를 변환하는 함수와 메서드가 몇 가지 있습니다. View()
+메서드를 사용하면 Tensor 형태를 자유롭게 변경할 수 있습니다.
+▼view()메서드로 Tensor 형태 변환하기
+In
+a = torch. tensor ([0, 1, 2, 3, 4, 5, 6, 7]) * 1차원 Tensor
+32 Tensor
+69

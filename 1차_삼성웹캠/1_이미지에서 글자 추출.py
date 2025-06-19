@@ -35,4 +35,4 @@ def detect_text_rest(image_path):
         print(json.dumps(result, indent=2))
 
 # 사용 예시
-detect_text_rest("captured_images\capture_1748825806.jpg")  # 이미지 파일 경로 수정
+detect_text_rest("output/right_page.jpg")  # 이미지 파일 경로 수정
